@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # OpenDMARC Autodiscovery
@@ -17,6 +17,18 @@ umask 0022
 # --------------
 
 logger -t "${0}" "Notice: Creating opendmarc opendmarc.conf..."
+
+if test -f /etc/device/services/mail/smtp/dmarc/relaxed.bin; then
+  rejectfailures=false
+else
+  rejectfailures=true
+fi
+
+if test -f /etc/device/services/mail/smtp/dmarc/relaxed-headers.bin; then
+  requiredheaders=false
+else
+  requiredheaders=true
+fi
 
 opendmarc_conf=`umask 0077; mktemp /etc/opendmarc.conf.XXXXXX`
 chmod 644 "${opendmarc_conf}"
@@ -278,7 +290,7 @@ HistoryFile /var/spool/opendmarc/opendmarc.dat
 ##  evaluation of the message.  Instead, an Authentication-Results header
 ##  field will be added.
 #
-# RejectFailures false
+RejectFailures ${rejectfailures}
 
 ##  ReportCommand string
 ##  	default "/usr/sbin/sendmail -t"
@@ -297,7 +309,7 @@ HistoryFile /var/spool/opendmarc/opendmarc.dat
 ##  From: field from which no domain name could be extracted will also be
 ##  rejected.
 #
-# RequiredHeaders false
+RequiredHeaders ${requiredheaders}
 
 ##  Socket socketspec
 ##  	default (none)

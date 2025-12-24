@@ -3,7 +3,9 @@
 set -e
 umask 0002
 
-OPTIONS="--polar disabled"
+OPTIONS="--polar disabled \
+         --polar relaxed \
+         --polar relaxed-headers"
 
 if [ "$1" == "--" ]; then
 
